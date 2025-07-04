@@ -65,11 +65,11 @@ public class VentaController {
     @GetMapping("/hateoas/{id}")
     public VentaDTO obtenerHATEOAS(@PathVariable Integer id) {
         VentaDTO dto = Service.obtenerVentaPorId(id)
-                .orElseThrow(() -> new RuntimeException("Venta not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Venta no encontrado por el: " + id));
         
-        dto.add(Link.of("http://localhost:8888/api/proxy/productos/" + dto.getId()).withSelfRel());
-        dto.add(Link.of("http://localhost:8888/api/proxy/productos/" + dto.getId()).withRel("Modificar HATEOAS").withType("PUT"));
-        dto.add(Link.of("http://localhost:8888/api/proxy/productos/" + dto.getId()).withRel("Eliminar HATEOAS").withType("DELETE"));
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withSelfRel());
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Modificar HATEOAS").withType("PUT"));
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Eliminar HATEOAS").withType("DELETE"));
 
         return dto;
     }
@@ -81,8 +81,8 @@ public class VentaController {
 
         for (VentaDTO dto : lista) {
             
-            dto.add(Link.of("http://localhost:8888/api/proxy/productos").withRel("Get todos HATEOAS"));
-            dto.add(Link.of("http://localhost:8888/api/proxy/productos/" + dto.getId()).withRel("Crear HATEOAS").withType("POST"));
+            dto.add(Link.of("http://localhost:8888/api/proxy/venta").withRel("Get todos HATEOAS"));
+            dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Crear HATEOAS").withType("POST"));
         }
 
         return lista;
