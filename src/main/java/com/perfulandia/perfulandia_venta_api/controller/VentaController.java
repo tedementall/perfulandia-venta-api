@@ -3,6 +3,7 @@ package com.perfulandia.perfulandia_venta_api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import com.perfulandia.perfulandia_venta_api.dto.VentaDTO;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -58,6 +60,32 @@ public class VentaController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/hateoas/{id}")
+    public VentaDTO obtenerHATEOAS(@PathVariable Integer id) {
+        VentaDTO dto = Service.obtenerVentaPorId(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrado por el: " + id));
+        
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withSelfRel());
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Modificar HATEOAS").withType("PUT"));
+        dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Eliminar HATEOAS").withType("DELETE"));
+
+        return dto;
+    }
+
+    
+    @GetMapping("/hateoas")
+    public List<VentaDTO> obtenerTodosHATEOAS() {
+        List<VentaDTO> lista = Service.obtenerVentas();
+
+        for (VentaDTO dto : lista) {
+            
+            dto.add(Link.of("http://localhost:8888/api/proxy/venta").withRel("Get todos HATEOAS"));
+            dto.add(Link.of("http://localhost:8888/api/proxy/venta/" + dto.getId()).withRel("Crear HATEOAS").withType("POST"));
+        }
+
+        return lista;
     }
     
 
